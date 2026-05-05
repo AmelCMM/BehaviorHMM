@@ -13,7 +13,7 @@ const double NEG_INF = -1e100;
 const double EPS = 1e-9;
 
 // ------------------------------------------------------
-// RAW OBSERVATION → FEATURE BUCKET ENGINE
+// RAW OBSERVATION -> FEATURE BUCKET ENGINE
 // ------------------------------------------------------
 struct RawObservation {
     std::string type;   // positive_message, negative_message, neutral_message, no_reply
@@ -55,7 +55,7 @@ struct RawObservation {
 };
 
 // ------------------------------------------------------
-// FEATURE-ENHANCED HMM (FULLY FIXED)
+// FEATURE-ENHANCED HMM 
 // ------------------------------------------------------
 class BehaviorHMM {
 private:
@@ -339,6 +339,6 @@ int main() {
                   << next_obs[i].second << " : " << next_obs[i].first << "\n";
     }
 
-    std::cout << "\n✅ Done. No crashes, fully dynamic.\n";
+    std::cout << "\nEXECUTION COMPLETE, LOL :-) \n";
     return 0;
 }
