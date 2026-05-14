@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: BehaviorHMM
+            asset_name: BehaviorHMM-linux
+
+          - os: macos-latest
+            artifact_name: BehaviorHMM
+            asset_name: BehaviorHMM-macos
+
+          - os: windows-latest
+            artifact_name: BehaviorHMM.exe
+            asset_name: BehaviorHMM-windows.exe
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build (Linux / macOS)
+        if: matrix.os != 'windows-latest'
+        run: g++ -std=c++17 -O2 -Wall -o BehaviorHMM BehaviorHMM.cpp
+
+      - name: Build (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: cmd
+        run: |
+          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+          cl /std:c++17 /O2 /W3 /Fe:BehaviorHMM.exe BehaviorHMM.cpp
+
+      - name: Rename artifact (Linux / macOS)
+        if: matrix.os != 'windows-latest'
+        run: cp BehaviorHMM ${{ matrix.asset_name }}
+
+      - name: Rename artifact (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: cmd
+        run: copy BehaviorHMM.exe ${{ matrix.asset_name }}
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.asset_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
